@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">👤 Registro en el Sistema de Reciclaje</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('registro_usuario') }}" method="POST">
+                        <!-- Información básica -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Cédula:</label>
+                                    <input type="text" class="form-control" name="cedula" 
+                                           placeholder="Número de cédula" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Nombre Completo:</label>
+                                    <input type="text" class="form-control" name="nombre" 
+                                           placeholder="Tu nombre completo" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Email Universitario:</label>
+                            <input type="email" class="form-control" name="email" 
+                                   placeholder="correo@indoamerica.edu.ec" required>
+                        </div>
+                        
+                        <!-- Selección de tipo de usuario -->
+                        <div class="mb-3">
+                            <label class="form-label">Tipo de Usuario:</label>
+                            <select class="form-select" name="tipo_usuario" id="tipoUsuario" required>
+                                <option value="">-- Selecciona tu tipo --</option>
+                                <option value="estudiante">🎓 Estudiante</option>
+                                <option value="docente">👨‍🏫 Docente</option>
+                                <option value="administrativo">💼 Personal Administrativo</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Campos para ESTUDIANTES -->
+                        <div id="camposEstudiante" class="campos-tipo" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Facultad:</label>
+                                <select class="form-select" name="facultad" id="facultadEstudiante">
+                                    <option value="">-- Selecciona tu facultad --</option>
+                                    <option value="Ciencias Económicas, Administrativas y Negocios">Facultad de Ciencias Económicas, Administrativas y Negocios</option>
+                                    <option value="Ciencias de la Salud y Bienestar Humano">Facultad de Ciencias de la Salud y Bienestar Humano</option>
+                                    <option value="Ciencias Sociales y Humanas">Facultad de Ciencias Sociales y Humanas</option>
+                                    <option value="Jurisprudencia y Ciencias Políticas">Facultad de Jurisprudencia y Ciencias Políticas</option>
+                                    <option value="Ingenierías">Facultad de Ingenierías</option>
+                                    <option value="Arquitectura, Diseño y Artes">Facultad de Arquitectura, Diseño y Artes</option>
+                                    <option value="Ciencias de la Educación">Facultad de Ciencias de la Educación</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Carrera:</label>
+                                <select class="form-select" name="carrera" id="carreraEstudiante">
+                                    <option value="">-- Primero selecciona una facultad --</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos para DOCENTES -->
+                        <div id="camposDocente" class="campos-tipo" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Facultad donde imparte clases:</label>
+                                <select class="form-select" name="facultad_docente">
+                                    <option value="">-- Selecciona la facultad --</option>
+                                    <option value="Ciencias Económicas, Administrativas y Negocios">Facultad de Ciencias Económicas, Administrativas y Negocios</option>
+                                    <option value="Ciencias de la Salud y Bienestar Humano">Facultad de Ciencias de la Salud y Bienestar Humano</option>
+                                    <option value="Ciencias Sociales y Humanas">Facultad de Ciencias Sociales y Humanas</option>
+                                    <option value="Jurisprudencia y Ciencias Políticas">Facultad de Jurisprudencia y Ciencias Políticas</option>
+                                    <option value="Ingenierías">Facultad de Ingenierías</option>
+                                    <option value="Arquitectura, Diseño y Artes">Facultad de Arquitectura, Diseño y Artes</option>
+                                    <option value="Ciencias de la Educación">Facultad de Ciencias de la Educación</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Campos para ADMINISTRATIVOS -->
+                        <div id="camposAdministrativo" class="campos-tipo" style="display: none;">
+                            <div class="mb-3">
+                                <label class="form-label">Departamento/Área:</label>
+                                <input type="text" class="form-control" name="departamento_administrativo" 
+                                       placeholder="Ej: Departamento de Recursos Humanos, Secretaría General, etc.">
+                            </div>
+                        </div>
+                        
+                        <!-- Contraseñas -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Contraseña:</label>
+                                    <input type="password" class="form-control" name="password" 
+                                           placeholder="Crea una contraseña segura" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Confirmar Contraseña:</label>
+                                    <input type="password" class="form-control" name="confirm_password" 
+                                           placeholder="Repite tu contraseña" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 btn-lg">Registrarse en el Sistema</button>
+                    </form>
+                    
+                    <div class="mt-3 text-center">
+                        <a href="{{ url_for('login') }}" class="btn btn-outline-secondary w-100">← Volver al Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para campos dinámicos -->
+<script>
+// Mapeo de facultades a carreras
+const carrerasPorFacultad = {
+    "Ciencias Económicas, Administrativas y Negocios": [
+        "Ingeniería en Inteligencia de Negocios",
+        "Administración de Empresas", 
+        "Negocios Internacionales",
+        "Contabilidad y Auditoría",
+        "Marketing Digital"
+    ],
+    "Ciencias de la Salud y Bienestar Humano": [
+        "Medicina",
+        "Enfermería", 
+        "Odontología"
+    ],
+    "Ciencias Sociales y Humanas": [
+        "Psicología",
+        "Psicología Clínica",
+        "Psicología Educativa", 
+        "Comunicación, Periodismo y Producción Multimedia"
+    ],
+    "Jurisprudencia y Ciencias Políticas": [
+        "Derecho"
+    ],
+    "Ingenierías": [
+        "Ingeniería en Tecnologías de la Información",
+        "Ingeniería Industrial",
+        "Ingeniería Mecatrónica",
+        "Ingeniería en Software", 
+        "Ingeniería Eléctrica",
+        "Ingeniería Civil"
+    ],
+    "Arquitectura, Diseño y Artes": [
+        "Arquitectura",
+        "Diseño de Medios Interactivos",
+        "Diseño de Productos"
+    ],
+    "Ciencias de la Educación": [
+        "Educación Inicial",
+        "Educación Básica",
+        "Pedagogía de los Idiomas Nacionales y Extranjeros",
+        "Pedagogía de la Actividad Física y Deporte"
+    ]
+};
+
+// Mostrar/ocultar campos según tipo de usuario
+document.getElementById('tipoUsuario').addEventListener('change', function() {
+    // Ocultar todos los campos primero
+    document.querySelectorAll('.campos-tipo').forEach(campo => campo.style.display = 'none');
+    
+    // Remover required de todos los campos primero
+    document.querySelectorAll('.campos-tipo select, .campos-tipo input').forEach(campo => {
+        campo.removeAttribute('required');
+    });
+    
+    // Mostrar campos según la selección y hacerlos requeridos
+    if (this.value === 'estudiante') {
+        document.getElementById('camposEstudiante').style.display = 'block';
+        document.querySelectorAll('#camposEstudiante select').forEach(campo => {
+            campo.setAttribute('required', 'required');
+        });
+    } else if (this.value === 'docente') {
+        document.getElementById('camposDocente').style.display = 'block';
+        document.querySelectorAll('#camposDocente select').forEach(campo => {
+            campo.setAttribute('required', 'required');
+        });
+    } else if (this.value === 'administrativo') {
+        document.getElementById('camposAdministrativo').style.display = 'block';
+        document.querySelectorAll('#camposAdministrativo input').forEach(campo => {
+            campo.setAttribute('required', 'required');
+        });
+    }
+});
+
+// Actualizar carreras cuando cambia la facultad
+document.getElementById('facultadEstudiante').addEventListener('change', function() {
+    const carreraSelect = document.getElementById('carreraEstudiante');
+    const facultad = this.value;
+    
+    carreraSelect.innerHTML = '<option value="">-- Selecciona una carrera --</option>';
+    
+    if (facultad && carrerasPorFacultad[facultad]) {
+        carrerasPorFacultad[facultad].forEach(carrera => {
+            const option = document.createElement('option');
+            option.value = carrera;
+            option.textContent = carrera;
+            carreraSelect.appendChild(option);
+        });
+    }
+});
+</script>
+
+<style>
+.campos-tipo {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}

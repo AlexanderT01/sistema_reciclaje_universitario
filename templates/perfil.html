@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Tarjeta de Perfil -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">👤 Perfil de Usuario</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3>{{ usuario.nombre }}</h3>
+                            <p class="text-muted">{{ usuario.email }}</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="fs-4 fw-bold text-warning">⭐ {{ usuario.puntos }} puntos</span>
+                                <span class="badge bg-success ms-2">Nivel {{ nivel }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="bg-warning text-dark rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                 style="width: 80px; height: 80px;">
+                                <span class="fs-2">{{ nivel }}</span>
+                            </div>
+                            <p class="mt-2 small">Nivel de Reciclador</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agrega esta sección en el perfil -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📊 Estado de Puntos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h4 class="text-success">{{ usuario.puntos }}</h4>
+                                <p class="mb-0">Puntos Totales</p>
+                                <small class="text-muted">Validados por administración</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h4 class="text-warning">{{ registros_pendientes }}</h4>
+                                <p class="mb-0">Registros Pendientes</p>
+                                <small class="text-muted">Esperando validación</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded p-3">
+                                <h4 class="text-primary">{{ registros_validados }}</h4>
+                                <p class="mb-0">Registros Validados</p>
+                                <small class="text-muted">Aprobados por admin</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <h6>💡 Información Importante</h6>
+                        <p class="mb-0">
+                            <strong>Los puntos se asignan únicamente cuando el administrador valida tus registros.</strong><br>
+                            Los materiales registrados aparecerán como "Pendientes" hasta que sean revisados y aprobados.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progreso de Puntos -->
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">📊 Progreso de Puntos</h5>
+                </div>
+                <div class="card-body">
+                    <div class="progress mb-3" style="height: 25px;">
+                        <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                             role="progressbar" 
+                             style="width: {{ porcentaje_progreso }}%"
+                             aria-valuenow="{{ porcentaje_progreso }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ usuario.puntos }} / {{ proximo_nivel_puntos }} puntos
+                        </div>
+                    </div>
+                    <p class="text-center mb-0">
+                        {% if proximo_nivel_puntos > usuario.puntos %}
+                        <small>Faltan {{ proximo_nivel_puntos - usuario.puntos }} puntos para el nivel {{ nivel + 1 }}</small>
+                        {% else %}
+                        <strong>¡Has alcanzado el máximo nivel! 🎉</strong>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Beneficios Disponibles -->
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">🎁 Beneficios Disponibles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for beneficio in beneficios %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 {% if usuario.puntos >= beneficio.puntos_requeridos %}border-success{% else %}border-secondary{% endif %}">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ beneficio.nombre }}</h6>
+                                    <p class="card-text small">{{ beneficio.descripcion }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge {% if usuario.puntos >= beneficio.puntos_requeridos %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ beneficio.puntos_requeridos }} pts
+                                        </span>
+                                        {% if usuario.puntos >= beneficio.puntos_requeridos %}
+                                        <button class="btn btn-sm btn-outline-success">Canjear</button>
+                                        {% else %}
+                                        <span class="text-muted small">No disponible</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="text-center mt-4">
+                <a href="/registrar-material-estudiante" class="btn btn-success btn-lg">➕ Registrar Más Material</a>
+                <a href="/estudiante-dashboard" class="btn btn-outline-secondary">🏠 Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

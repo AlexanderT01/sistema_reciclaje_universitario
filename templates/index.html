@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section rounded">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">♻️ Gestión de Reciclaje</h1>
+        <p class="lead">Universidad Indoamérica - Contribuyendo al ODS 12</p>
+    </div>
+</div>
+
+<!-- Tarjetas de funcionalidades -->
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">📝 Registrar Material</h5>
+                <p class="card-text">Registra tus materiales reciclables y acumula puntos</p>
+                <a href="{{ url_for('registro') }}" class="btn btn-success">Ir al registro</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">⭐ Mis Puntos</h5>
+                <p class="card-text">Consulta tus puntos acumulados y beneficios</p>
+                <div class="btn-group-vertical w-100">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cambia esta tarjeta: -->
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title text-success">📊 Reportes</h5>
+                <p class="card-text">Estadísticas y reportes de reciclaje</p>
+                <a href="/dashboard" class="btn btn-outline-success">Ver dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Información del sistema -->
+<div class="row mt-5">
+    <div class="col-md-8 mx-auto">
+        <div class="alert alert-info">
+            <h4>Objetivo del Sistema</h4>
+            <p>Optimizar el registro, control y análisis de materiales reciclables en el campus universitario Indoamerica, contribuyendo al cumplimiento del ODS 12.</p>
+            <hr>
+            <p class="mb-0"><strong>Meta:</strong> Reducir en 30% los residuos no reciclados durante el primer año.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow text-center">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">✅ ¡Registro Exitoso!</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5>Material registrado correctamente</h5>
+                        <hr>
+                        <p class="mb-1"><strong>Tipo:</strong> {{ registro.tipo_material }}</p>
+                        <p class="mb-1"><strong>Peso:</strong> {{ registro.peso }} kg</p>
+                        <p class="mb-1"><strong>Punto:</strong> {{ registro.punto_entrega }}</p>
+                        <p class="mb-1"><strong>Puntos ganados:</strong> {{ puntos_ganados }} puntos</p>
+                        <p class="mb-0"><strong>Puntos totales:</strong> {{ usuario.puntos }} puntos</p>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="/registro" class="btn btn-success">➕ Registrar otro material</a>
+                        <a href="/" class="btn btn-outline-secondary">🏠 Volver al inicio</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

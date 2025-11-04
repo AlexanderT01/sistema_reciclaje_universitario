@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Bienvenida -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h3>¡Hola, {{ session.usuario_nombre }}! 👋</h3>
+                    <p class="mb-0">Bienvenido al sistema de reciclaje universitario</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas de funcionalidades para estudiantes -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">📝 Registrar Material</h5>
+                    <p class="card-text">Registra tus materiales reciclables y acumula puntos</p>
+                    <a href="{{ url_for('registrar_material_estudiante') }}" class="btn btn-success">Ir al registro</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">⭐ Mis Puntos</h5>
+                    <p class="card-text">Consulta tus puntos acumulados y beneficios</p>
+                    <a href="{{ url_for('perfil', usuario_id=session.usuario_id) }}" class="btn btn-outline-success">Ver mis puntos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información adicional -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>💡 ¿Cómo funciona?</h5>
+                    <ol>
+                        <li>Registra tus materiales reciclables con evidencia fotográfica</li>
+                        <li>Acumula puntos según el tipo y cantidad de material</li>
+                        <li>Canjea tus puntos por beneficios universitarios</li>
+                        <li>¡Contribuye al medio ambiente y gana recompensas!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

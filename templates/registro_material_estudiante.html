@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">📝 Registrar Material Reciclable</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('registrar_material_estudiante') }}" method="POST" enctype="multipart/form-data">
+                        
+                        <!-- Tipo de Material -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Tipo de Material:</strong></label>
+                            <select class="form-select" name="tipo_material" required>
+                                <option value="">-- Selecciona --</option>
+                                <option value="papel">📄 Papel</option>
+                                <option value="plástico">🥤 Plástico</option>
+                                <option value="vidrio">🍶 Vidrio</option>
+                                <option value="metal">🥫 Metal</option>
+                            </select>
+                        </div>
+
+                        <!-- Peso -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Peso (kg):</strong></label>
+                            <input type="number" class="form-control" name="peso" 
+                                   step="0.1" min="0.1" placeholder="Ej: 2.5" required>
+                            <div class="form-text">Ingresa el peso en kilogramos</div>
+                        </div>
+
+                        <!-- Punto de Entrega -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Punto de Entrega:</strong></label>
+                            <select class="form-select" name="punto_entrega" required>
+                                <option value="">-- Selecciona punto --</option>
+                                <option value="Biblioteca Central">🏛️ Biblioteca</option>
+                                <option value="Comedor Norte">🍽️ Cafeteria</option>
+                                <option value="Edificio de Ingeniería">⚙️ Edificio de Ingeniería</option>
+                                <option value="Canchas Deportivas">⚽ Canchas Deportivas</option>
+                            </select>
+                        </div>
+
+                        <!-- Subida de Evidencia -->
+                        <div class="mb-3">
+                            <label class="form-label"><strong>📸 Subir Evidencia:</strong></label>
+                            <input type="file" class="form-control" name="evidencia" accept="image/*" required>
+                            <div class="form-text">Toma una foto del material que vas a reciclar (Formatos: JPG, PNG, GIF)</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 btn-lg">
+                            ✅ Registrar Material con Evidencia
+                        </button>
+                    </form>
+
+                    <div class="mt-3">
+                        <a href="{{ url_for('estudiante_dashboard') }}" class="btn btn-outline-secondary w-100">← Volver al Dashboard</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de puntos -->
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>💡 Sistema de Puntos</h5>
+                    <ul class="mb-0">
+                        <li><strong>Papel:</strong> 10 puntos por kg</li>
+                        <li><strong>Plástico:</strong> 15 puntos por kg</li>
+                        <li><strong>Vidrio:</strong> 12 puntos por kg</li>
+                        <li><strong>Metal:</strong> 20 puntos por kg</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

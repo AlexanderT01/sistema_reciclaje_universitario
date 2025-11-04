@@ -1,0 +1,370 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="text-success mb-1">📈 Reportes Avanzados</h1>
+            <p class="text-muted mb-0">Métricas de sostenibilidad e impacto ambiental</p>
+        </div>
+        <div class="btn-group">
+            <a href="/dashboard" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+            <!-- BOTÓN PDF -->
+            <a href="/generar-pdf-reporte" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Descargar PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Impacto Ambiental -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-success border-4 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-success fw-bold text-uppercase small">Total Reciclado</div>
+                            <div class="h3 fw-bold text-gray-800">{{ total_kg }} kg</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-leaf me-1"></i> Equivale a {{ arboles_salvados }} árboles
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-success bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-recycle fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-info border-4 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-info fw-bold text-uppercase small">Huella de Carbono</div>
+                            <div class="h3 fw-bold text-gray-800">{{ co2_evitado }} kg</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-car me-1"></i> CO₂ evitado
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-info bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-cloud fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-warning border-4 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-warning fw-bold text-uppercase small">Impacto en Árboles</div>
+                            <div class="h3 fw-bold text-gray-800">{{ arboles_salvados }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-tree me-1"></i> Árboles salvados
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-tree fa-2x text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-primary border-4 shadow h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div class="text-primary fw-bold text-uppercase small">Diversidad</div>
+                            <div class="h3 fw-bold text-gray-800">{{ distribucion_materiales|length }}</div>
+                            <div class="text-xs text-muted">
+                                <i class="fas fa-boxes me-1"></i> Tipos de materiales
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                <i class="fas fa-shapes fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas de Validación -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-gradient-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Estadísticas de Validación</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-body text-center">
+                                    <div class="text-primary mb-2">
+                                        <i class="fas fa-inbox fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-primary">{{ total_registros }}</h4>
+                                    <h6 class="text-muted">Total Registros</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <div class="text-success mb-2">
+                                        <i class="fas fa-check-circle fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-success">{{ registros_validados }}</h4>
+                                    <h6 class="text-muted">Validados</h6>
+                                    <span class="badge bg-success">
+                                        {{ ((registros_validados / total_registros) * 100)|round(1) if total_registros > 0 else 0 }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <div class="text-warning mb-2">
+                                        <i class="fas fa-clock fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-warning">{{ registros_pendientes }}</h4>
+                                    <h6 class="text-muted">Pendientes</h6>
+                                    <span class="badge bg-warning">
+                                        {{ ((registros_pendientes / total_registros) * 100)|round(1) if total_registros > 0 else 0 }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6 mb-3">
+                            <div class="card border-danger">
+                                <div class="card-body text-center">
+                                    <div class="text-danger mb-2">
+                                        <i class="fas fa-times-circle fa-2x"></i>
+                                    </div>
+                                    <h4 class="text-danger">{{ registros_rechazados }}</h4>
+                                    <h6 class="text-muted">Rechazados</h6>
+                                    <span class="badge bg-danger">
+                                        {{ ((registros_rechazados / total_registros) * 100)|round(1) if total_registros > 0 else 0 }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nota importante -->
+                    <div class="alert alert-warning mt-3">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="alert-heading">💡 Nota Importante</h6>
+                                <p class="mb-0">
+                                    <strong>Todos los cálculos de impacto ambiental y estadísticas se basan únicamente en registros VALIDADOS.</strong><br>
+                                    Los registros pendientes y rechazados no se incluyen en los reportes de sostenibilidad.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Distribución por Material -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Distribución por Material</h5>
+                </div>
+                <div class="card-body">
+                    {% if distribucion_materiales %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Material</th>
+                                    <th>Cantidad</th>
+                                    <th>Porcentaje</th>
+                                    <th>Progreso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for material in distribucion_materiales %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <span class="material-badge me-3">
+                                                {% if material.tipo == 'papel' %} 📄
+                                                {% elif material.tipo == 'plástico' %} 🫙
+                                                {% elif material.tipo == 'vidrio' %} 🍶
+                                                {% elif material.tipo == 'metal' %} ⚙️
+                                                {% elif material.tipo == 'orgánico' %} 🍂
+                                                {% else %} 📦
+                                                {% endif %}
+                                            </span>
+                                            <strong>{{ material.tipo|title }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold">{{ material.total }} kg</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-bold">{{ material.porcentaje }}%</span>
+                                    </td>
+                                    <td style="width: 30%">
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-success" 
+                                                 style="width: {{ material.porcentaje }}%"
+                                                 role="progressbar">
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">No hay datos de materiales reciclados aún.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Información de Impacto -->
+        <div class="col-lg-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-globe-americas me-2"></i>Impacto Ambiental</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-12 mb-4">
+                            <div class="card border-success">
+                                <div class="card-body">
+                                    <div class="text-success mb-3">
+                                        <i class="fas fa-tree fa-3x"></i>
+                                    </div>
+                                    <h3 class="text-success">{{ arboles_salvados }}</h3>
+                                    <h6 class="text-muted">Árboles Salvados</h6>
+                                    <small class="text-muted">Equivalente en papel reciclado</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card border-info">
+                                <div class="card-body">
+                                    <div class="text-info mb-3">
+                                        <i class="fas fa-car fa-3x"></i>
+                                    </div>
+                                    <h3 class="text-info">{{ co2_evitado }} kg</h3>
+                                    <h6 class="text-muted">CO₂ Evitado</h6>
+                                    <small class="text-muted">Emisiones de automóvil evitadas</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success mt-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <div class="ms-3">
+                                <h6 class="alert-heading">♻️ Contribución al ODS 12</h6>
+                                <p class="mb-0 small">Tu universidad está contribuyendo activamente a los Objetivos de Desarrollo Sostenible mediante la gestión responsable de residuos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Métricas Adicionales -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="fas fa-trophy me-2"></i>Resumen de Impacto</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3 border rounded bg-light">
+                                <h3 class="text-success mb-1">{{ total_kg }}</h3>
+                                <p class="text-muted mb-0">kg reciclados</p>
+                                <small class="text-success">Total acumulado</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3 border rounded bg-light">
+                                <h3 class="text-primary mb-1">{{ distribucion_materiales|length }}</h3>
+                                <p class="text-muted mb-0">materiales</p>
+                                <small class="text-primary">Diversidad</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3 border rounded bg-light">
+                                <h3 class="text-warning mb-1">{{ arboles_salvados }}</h3>
+                                <p class="text-muted mb-0">árboles</p>
+                                <small class="text-warning">Salvados</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="p-3 border rounded bg-light">
+                                <h3 class="text-info mb-1">{{ co2_evitado }}</h3>
+                                <p class="text-muted mb-0">kg CO₂</p>
+                                <small class="text-info">Evitados</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.material-badge {
+    font-size: 1.5em;
+}
+.card-header.bg-gradient-info {
+    background: linear-gradient(45deg, #17a2b8, #20c997);
+}
+.border-start {
+    border-left-width: 4px !important;
+}
+.progress {
+    border-radius: 10px;
+}
+.material-badge {
+    width: 40px;
+    text-align: center;
+}
+</style>
+{% endblock %}

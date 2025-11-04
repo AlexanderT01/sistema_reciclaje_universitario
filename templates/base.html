@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reciclaje Universitario</title>
+    
+    <!-- Bootstrap CSS LOCAL -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .main-container {
+            min-height: 70vh;
+        }
+        .user-badge {
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% if session.get('usuario_id') %}{{ url_for('estudiante_dashboard') if session.get('usuario_tipo') in ['estudiante', 'docente', 'administrativo'] else url_for('dashboard') }}{% else %}{{ url_for('login') }}{% endif %}">
+                ♻️ Sistema de Reciclaje Universitario
+            </a>
+            
+            <!-- Menú de usuario logueado -->
+            {% if session.usuario_id %}
+            <div class="navbar-nav ms-auto d-flex flex-row align-items-center">
+                <span class="navbar-text me-3">
+                    👋 <strong>{{ session.usuario_nombre }}</strong>
+                    <span class="badge bg-light text-dark user-badge ms-1">
+                        {{ session.usuario_tipo|title }}
+                    </span>
+                </span>
+                
+                <!-- Menú desplegable -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Menú
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <!-- Menú para Estudiantes, Docentes y Administrativos -->
+                        {% if session.usuario_tipo in ['estudiante', 'docente', 'administrativo'] %}
+                        <li><a class="dropdown-item" href="{{ url_for('estudiante_dashboard') }}">🏠 Mi Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('registrar_material_estudiante') }}">📝 Registrar Material</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('perfil', usuario_id=session.usuario_id) }}">⭐ Mis Puntos</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        {% elif session.usuario_tipo == 'administrador' %}
+                        <!-- Menú para Administradores -->
+                        <li><a class="dropdown-item" href="{{ url_for('dashboard') }}">📊 Dashboard Admin</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('reportes') }}">📈 Reportes</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        {% endif %}
+                        
+                        <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}">🚪 Cerrar Sesión</a></li>
+                    </ul>
+                </div>
+            </div>
+            {% else %}
+            <!-- Botón de login cuando no hay sesión -->
+            <div class="navbar-nav ms-auto">
+                <a class="btn btn-outline-light btn-sm" href="{{ url_for('login') }}">🔐 Iniciar Sesión</a>
+            </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Mostrar mensajes flash -->
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container main-container">
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        <div class="container">
+            <p class="mb-0">ODS 12 - Producción y consumo responsables | Universidad Indoamérica</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
