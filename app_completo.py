@@ -695,6 +695,140 @@ def rechazar_registro(registro_id):
     except Exception as e:
         return {'success': False, 'error': str(e)}
 
+# === RUTA DE EMERGENCIA - CREAR ADMIN ===
+@app.route('/admin-setup')
+def admin_setup():
+    """Ruta temporal para crear administrador"""
+    try:
+        # Verificar si ya existe admin
+        existing_admin = Usuario.query.filter_by(tipo='administrador').first()
+        
+        if existing_admin:
+            return f'''
+            <div style="padding: 20px; font-family: Arial; background: #e8f5e8; border-radius: 10px;">
+                <h1>✅ Administrador Ya Existe</h1>
+                <div style="background: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
+                    <h3>Credenciales:</h3>
+                    <p><strong>🔑 Usuario:</strong> admin123</p>
+                    <p><strong>🔒 Contraseña:</strong> admin123</p>
+                    <p><strong>📧 Email:</strong> admin@universidad.edu</p>
+                </div>
+                <a href="/login" style="background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    🚀 Ir al Login
+                </a>
+            </div>
+            '''
+        
+        # Crear administrador
+        nuevo_admin = Usuario(
+            cedula='admin123',
+            nombre='Administrador del Sistema',
+            email='admin@universidad.edu',
+            password=generate_password_hash('admin123'),
+            tipo='administrador',
+            facultad='Administración Central',
+            departamento='Sistema de Reciclaje'
+        )
+        
+        db.session.add(nuevo_admin)
+        db.session.commit()
+        
+        return f'''
+        <div style="padding: 20px; font-family: Arial; background: #d4edda; border-radius: 10px;">
+            <h1>🎉 ¡Administrador Creado Exitosamente!</h1>
+            <div style="background: white; padding: 20px; border-radius: 5px; margin: 15px 0;">
+                <h3>🔐 Credenciales de Acceso:</h3>
+                <div style="font-size: 18px; margin: 10px 0;">
+                    <p><strong>Usuario:</strong> <code style="background: #f8f9fa; padding: 5px; border-radius: 3px;">admin123</code></p>
+                    <p><strong>Contraseña:</strong> <code style="background: #f8f9fa; padding: 5px; border-radius: 3px;">admin123</code></p>
+                </div>
+                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                    <strong>⚠️ Importante:</strong> Guarda estas credenciales
+                </div>
+            </div>
+            <a href="/login" style="background: #007bff; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 18px; display: inline-block;">
+                🔐 Ir al Login
+            </a>
+        </div>
+        '''
+        
+    except Exception as e:
+        return f'''
+        <div style="padding: 20px; font-family: Arial; background: #f8d7da; border-radius: 10px;">
+            <h1>❌ Error al crear administrador</h1>
+            <p><strong>Error:</strong> {str(e)}</p>
+            <a href="/" style="background: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                Volver al Inicio
+            </a>
+        </div>
+        '''
+
+# === VER ESTADO DE LA BD ===
+@app.route('/db-status')
+def db_status():
+    """Ver estado actual de la base de datos"""
+    try:
+        total_usuarios = Usuario.query.count()
+        total_materiales = MaterialReciclado.query.count()
+        administradores = Usuario.query.filter_by(tipo='administrador').count()
+        
+        # Listar usuarios existentes
+        usuarios = Usuario.query.all()
+        
+        html = f'''
+        <div style="padding: 20px; font-family: Arial;">
+            <h1>📊 Estado de la Base de Datos</h1>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 20px 0;">
+                <div style="background: #007bff; color: white; padding: 15px; border-radius: 5px; text-align: center;">
+                    <h3>👥 Usuarios</h3>
+                    <h2>{total_usuarios}</h2>
+                </div>
+                <div style="background: #28a745; color: white; padding: 15px; border-radius: 5px; text-align: center;">
+                    <h3>📦 Materiales</h3>
+                    <h2>{total_materiales}</h2>
+                </div>
+                <div style="background: #ffc107; color: black; padding: 15px; border-radius: 5px; text-align: center;">
+                    <h3>👑 Admins</h3>
+                    <h2>{administradores}</h2>
+                </div>
+            </div>
+            
+            <h3>Usuarios Existentes:</h3>
+        '''
+        
+        if usuarios:
+            for usuario in usuarios:
+                bg_color = '#d4edda' if usuario.tipo == 'administrador' else '#f8f9fa'
+                html += f'''
+                <div style="background: {bg_color}; padding: 10px; margin: 5px 0; border-radius: 5px;">
+                    <strong>{usuario.nombre}</strong> 
+                    - {usuario.cedula} 
+                    - <span style="color: {'#28a745' if usuario.tipo == 'administrador' else '#6c757d'}">{usuario.tipo}</span>
+                    - Puntos: {usuario.puntos}
+                </div>
+                '''
+        else:
+            html += '<p>No hay usuarios registrados</p>'
+        
+        html += '''
+            <div style="margin-top: 20px;">
+                <a href="/admin-setup" style="background: #dc3545; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-right: 10px;">
+                    🛠️ Crear Administrador
+                </a>
+                <a href="/login" style="background: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                    🔐 Ir al Login
+                </a>
+            </div>
+        </div>
+        '''
+        
+        return html
+        
+    except Exception as e:
+        return f'<h1>Error: {str(e)}</h1>'
+
+
 
 # Crear tablas si no existen
 with app.app_context():
