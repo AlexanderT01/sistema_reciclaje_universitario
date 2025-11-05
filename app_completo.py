@@ -453,10 +453,12 @@ def perfil(usuario_id):
         # Beneficios disponibles
         beneficios = [
             {"nombre": "Certificado Ecológico", "descripcion": "Certificado digital de reconocimiento", "puntos_requeridos": 100},
-            {"nombre": "Descuento 10% Cafetería", "descripcion": "Vale de descuento en cafetería universitaria", "puntos_requeridos": 200},
-            {"nombre": "Kit Reciclaje Premium", "descripcion": "Bolsa ecológica y guantes reciclables", "puntos_requeridos": 400},
-            {"nombre": "Reconocimiento Público", "descripcion": "Mención en redes sociales universitarias", "puntos_requeridos": 600},
-            {"nombre": "Beca Ambiental", "descripcion": "Preferencia en becas de sostenibilidad", "puntos_requeridos": 1000}
+            {"nombre": "Descuento 10% Cafetería", "descripcion": "Vale de descuento en cafetería de la universidad", "puntos_requeridos": 200},
+            {"nombre": "Sorpresa", "descripcion": "Elemento u objeto sorpresa", "puntos_requeridos": 200},
+            {"nombre": "Kit Universidad 1 ", "descripcion": "Bolsa y tomatodo de la Universidad", "puntos_requeridos": 400},
+            {"nombre": "Combo de Cafeteria", "descripcion": "Reclama por un combo de la cafeteria", "puntos_requeridos": 600},
+            {"nombre": "Carnet Estudiantil", "descripcion": "Si se te perdio puedes conseguirlo", "puntos_requeridos": 1000},
+            {"nombre": "Kit Universidad 2 ", "descripcion": "Hoddie y Cuaderno de la Universidad", "puntos_requeridos": 1500}
         ]
         
         registros_pendientes = MaterialReciclado.query.filter_by(
