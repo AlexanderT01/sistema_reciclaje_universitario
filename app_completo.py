@@ -41,14 +41,29 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 db.init_app(app)
 
 # Configuración para subida de archivos
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+# Configuración MEJORADA para subida de archivos
+import tempfile
+import os
+
+# SOLO CAMBIA ESTA LÍNEA:
+if os.environ.get('RAILWAY_ENVIRONMENT') or os.environ.get('DATABASE_URL'):
+    # En producción (Railway) usar carpeta temporal
+    app.config['UPLOAD_FOLDER'] = os.path.join(tempfile.gettempdir(), 'reciclaje_uploads')
+    print(f"🌐 MODO PRODUCCIÓN: Uploads en {app.config['UPLOAD_FOLDER']}")
+else:
+    # En desarrollo (local) usar static/uploads
+    app.config['UPLOAD_FOLDER'] = 'static/uploads'
+    print(f"💻 MODO DESARROLLO: Uploads en {app.config['UPLOAD_FOLDER']}")
+
+# Crear carpeta inmediatamente
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# MANTÉN ESTO IGUAL:
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
 # Ruta principal redirige a login
 @app.route('/')
 def index():
@@ -262,7 +277,19 @@ def registrar_material_estudiante():
     
     # Si es POST, procesar el formulario
     try:
-        # Verificar si se envió un archivo
+        # SOLUCIÓN: Verificar y crear carpeta UPLOADS de forma segura
+        upload_folder = app.config['UPLOAD_FOLDER']
+        
+        # Crear carpeta si no existe (con todos los directorios padres)
+        os.makedirs(upload_folder, exist_ok=True)
+        print(f"✅ Carpeta verificada/creada: {upload_folder}")
+        
+        # Verificar permisos de escritura
+        if not os.access(upload_folder, os.W_OK):
+            print(f"❌ Sin permisos de escritura en: {upload_folder}")
+            flash('Error de configuración del sistema. Contacte al administrador.', 'danger')
+            return render_template('registro_material_estudiante.html')
+        
         if 'evidencia' not in request.files:
             flash('Debes subir una evidencia fotográfica', 'danger')
             return render_template('registro_material_estudiante.html')
@@ -279,8 +306,21 @@ def registrar_material_estudiante():
             filename = secure_filename(file.filename)
             # Hacer el nombre único
             unique_filename = f"{session['usuario_id']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            file.save(file_path)
+            file_path = os.path.join(upload_folder, unique_filename)
+            
+            # VERIFICACIÓN EXTRA antes de guardar
+            print(f"📁 Intentando guardar en: {file_path}")
+            print(f"📁 Carpeta existe: {os.path.exists(upload_folder)}")
+            print(f"📁 Permisos escritura: {os.access(upload_folder, os.W_OK)}")
+            
+            try:
+                file.save(file_path)
+                print(f"✅ Archivo guardado exitosamente: {unique_filename}")
+            except Exception as save_error:
+                print(f"❌ Error guardando archivo: {str(save_error)}")
+                # FALLBACK: Guardar sin imagen pero permitir registro
+                unique_filename = None
+                flash('⚠️ Material registrado pero sin evidencia (error técnico temporal)', 'warning')
             
             # Obtener otros datos del formulario
             tipo_material = request.form['tipo_material']
@@ -291,18 +331,16 @@ def registrar_material_estudiante():
             puntos_por_kg = {'papel': 10, 'plástico': 15, 'vidrio': 12, 'metal': 20, 'orgánico': 5}
             puntos_ganados = int(peso * puntos_por_kg.get(tipo_material, 10))
             
-            # Crear registro con estado PENDIENTE (sin asignar puntos)
+            # Crear registro (con o sin evidencia)
             nuevo_registro = MaterialReciclado(
                 usuario_id=session['usuario_id'],
                 tipo_material=tipo_material,
                 peso=peso,
                 punto_entrega=punto_entrega,
-                evidencia_img=unique_filename,
-                estado='pendiente',  # Estado inicial
-                puntos_ganados=puntos_ganados  # Guardar los puntos potenciales
+                evidencia_img=unique_filename,  # Puede ser None si falló
+                estado='pendiente',
+                puntos_ganados=puntos_ganados
             )
-            
-            # Los puntos se asignarán solo cuando el admin valide
             
             db.session.add(nuevo_registro)
             db.session.commit()
@@ -315,6 +353,7 @@ def registrar_material_estudiante():
         
     except Exception as e:
         db.session.rollback()
+        print(f"❌ Error general al registrar: {str(e)}")
         flash(f'❌ Error al registrar: {str(e)}', 'danger')
         return render_template('registro_material_estudiante.html')
 
