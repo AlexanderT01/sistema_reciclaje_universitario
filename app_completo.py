@@ -734,145 +734,141 @@ def rechazar_registro(registro_id):
     except Exception as e:
         return {'success': False, 'error': str(e)}
 
-# === RUTA DE EMERGENCIA - CREAR ADMIN ===
-@app.route('/admin-setup')
-def admin_setup():
-    """Ruta temporal para crear administrador"""
-    try:
-        # Verificar si ya existe admin
-        existing_admin = Usuario.query.filter_by(tipo='administrador').first()
-        
-        if existing_admin:
-            return f'''
-            <div style="padding: 20px; font-family: Arial; background: #e8f5e8; border-radius: 10px;">
-                <h1>✅ Administrador Ya Existe</h1>
-                <div style="background: white; padding: 15px; border-radius: 5px; margin: 15px 0;">
-                    <h3>Credenciales:</h3>
-                    <p><strong>🔑 Usuario:</strong> admin123</p>
-                    <p><strong>🔒 Contraseña:</strong> admin123</p>
-                    <p><strong>📧 Email:</strong> admin@universidad.edu</p>
-                </div>
-                <a href="/login" style="background: #28a745; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    🚀 Ir al Login
-                </a>
-            </div>
-            '''
-        
-        # Crear administrador
-        nuevo_admin = Usuario(
-            cedula='admin123',
-            nombre='Administrador del Sistema',
-            email='admin@universidad.edu',
-            password=generate_password_hash('admin123'),
-            tipo='administrador',
-            facultad='Administración Central',
-            departamento='Sistema de Reciclaje'
-        )
-        
-        db.session.add(nuevo_admin)
-        db.session.commit()
-        
-        return f'''
-        <div style="padding: 20px; font-family: Arial; background: #d4edda; border-radius: 10px;">
-            <h1>🎉 ¡Administrador Creado Exitosamente!</h1>
-            <div style="background: white; padding: 20px; border-radius: 5px; margin: 15px 0;">
-                <h3>🔐 Credenciales de Acceso:</h3>
-                <div style="font-size: 18px; margin: 10px 0;">
-                    <p><strong>Usuario:</strong> <code style="background: #f8f9fa; padding: 5px; border-radius: 3px;">admin123</code></p>
-                    <p><strong>Contraseña:</strong> <code style="background: #f8f9fa; padding: 5px; border-radius: 3px;">admin123</code></p>
-                </div>
-                <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                    <strong>⚠️ Importante:</strong> Guarda estas credenciales
-                </div>
-            </div>
-            <a href="/login" style="background: #007bff; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 18px; display: inline-block;">
-                🔐 Ir al Login
-            </a>
-        </div>
-        '''
-        
-    except Exception as e:
-        return f'''
-        <div style="padding: 20px; font-family: Arial; background: #f8d7da; border-radius: 10px;">
-            <h1>❌ Error al crear administrador</h1>
-            <p><strong>Error:</strong> {str(e)}</p>
-            <a href="/" style="background: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                Volver al Inicio
-            </a>
-        </div>
-        '''
-
-# === VER ESTADO DE LA BD ===
-@app.route('/db-status')
-def db_status():
-    """Ver estado actual de la base de datos"""
-    try:
-        total_usuarios = Usuario.query.count()
-        total_materiales = MaterialReciclado.query.count()
-        administradores = Usuario.query.filter_by(tipo='administrador').count()
-        
-        # Listar usuarios existentes
-        usuarios = Usuario.query.all()
-        
-        html = f'''
-        <div style="padding: 20px; font-family: Arial;">
-            <h1>📊 Estado de la Base de Datos</h1>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin: 20px 0;">
-                <div style="background: #007bff; color: white; padding: 15px; border-radius: 5px; text-align: center;">
-                    <h3>👥 Usuarios</h3>
-                    <h2>{total_usuarios}</h2>
-                </div>
-                <div style="background: #28a745; color: white; padding: 15px; border-radius: 5px; text-align: center;">
-                    <h3>📦 Materiales</h3>
-                    <h2>{total_materiales}</h2>
-                </div>
-                <div style="background: #ffc107; color: black; padding: 15px; border-radius: 5px; text-align: center;">
-                    <h3>👑 Admins</h3>
-                    <h2>{administradores}</h2>
-                </div>
-            </div>
-            
-            <h3>Usuarios Existentes:</h3>
-        '''
-        
-        if usuarios:
-            for usuario in usuarios:
-                bg_color = '#d4edda' if usuario.tipo == 'administrador' else '#f8f9fa'
-                html += f'''
-                <div style="background: {bg_color}; padding: 10px; margin: 5px 0; border-radius: 5px;">
-                    <strong>{usuario.nombre}</strong> 
-                    - {usuario.cedula} 
-                    - <span style="color: {'#28a745' if usuario.tipo == 'administrador' else '#6c757d'}">{usuario.tipo}</span>
-                    - Puntos: {usuario.puntos}
-                </div>
-                '''
-        else:
-            html += '<p>No hay usuarios registrados</p>'
-        
-        html += '''
-            <div style="margin-top: 20px;">
-                <a href="/admin-setup" style="background: #dc3545; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; margin-right: 10px;">
-                    🛠️ Crear Administrador
-                </a>
-                <a href="/login" style="background: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                    🔐 Ir al Login
-                </a>
-            </div>
-        </div>
-        '''
-        
-        return html
-        
-    except Exception as e:
-        return f'<h1>Error: {str(e)}</h1>'
-
-
 
 # Crear tablas si no existen
 with app.app_context():
     db.create_all()
-    print("✅ Tablas de base de datos verificadas/creadas")
+    
+    print("🔧 INICIANDO CREACIÓN DE DATOS...")
+    
+    # ELIMINAR datos existentes para empezar fresco
+    try:
+        MaterialReciclado.query.delete()
+        Usuario.query.delete()
+        db.session.commit()
+        print("✅ Tablas limpiadas")
+    except:
+        db.session.rollback()
+        print("⚠️ No se pudieron limpiar tablas (probablemente ya estaban vacías)")
+    
+    # CREAR ADMINISTRADOR
+    if not Usuario.query.filter_by(cedula='admin123').first():
+        admin = Usuario(
+            cedula='admin123',
+            nombre='Administrador Principal',
+            email='admin@universidad.edu',
+            password=generate_password_hash('admin123'),
+            tipo='administrador',
+            facultad='Sistema',
+            departamento='TI'
+        )
+        db.session.add(admin)
+        print("✅ Administrador creado")
+    
+    # CREAR USUARIOS DE PRUEBA
+    usuarios_prueba = [
+        {
+            'cedula': '20240001',
+            'nombre': 'Ana García',
+            'email': 'ana@estudiante.edu',
+            'password': 'estudiante123',
+            'tipo': 'estudiante',
+            'facultad': 'Ingeniería',
+            'carrera': 'Sistemas',
+            'puntos': 85
+        },
+        {
+            'cedula': '20240002', 
+            'nombre': 'Carlos Rodríguez',
+            'email': 'carlos@estudiante.edu',
+            'password': 'estudiante123',
+            'tipo': 'estudiante',
+            'facultad': 'Ciencias',
+            'carrera': 'Biología',
+            'puntos': 120
+        },
+        {
+            'cedula': '1001001',
+            'nombre': 'Dra. María López',
+            'email': 'maria@docente.edu',
+            'password': 'docente123', 
+            'tipo': 'docente',
+            'facultad': 'Medicina',
+            'departamento': 'Anatomía'
+        }
+    ]
+    
+    for user_data in usuarios_prueba:
+        if not Usuario.query.filter_by(cedula=user_data['cedula']).first():
+            usuario = Usuario(
+                cedula=user_data['cedula'],
+                nombre=user_data['nombre'],
+                email=user_data['email'],
+                password=generate_password_hash(user_data['password']),
+                tipo=user_data['tipo'],
+                facultad=user_data['facultad'],
+                puntos=user_data.get('puntos', 0)
+            )
+            if user_data['tipo'] == 'estudiante':
+                usuario.carrera = user_data.get('carrera', '')
+            else:
+                usuario.departamento = user_data.get('departamento', '')
+            
+            db.session.add(usuario)
+            print(f"✅ Usuario creado: {user_data['nombre']}")
+    
+    # CREAR MATERIALES DE PRUEBA
+    materiales_prueba = [
+        {
+            'usuario_id': 2,  # Ana García
+            'tipo_material': 'plástico',
+            'peso': 2.5,
+            'punto_entrega': 'Edificio de Ingeniería',
+            'estado': 'validado',
+            'puntos_ganados': 37
+        },
+        {
+            'usuario_id': 2,
+            'tipo_material': 'papel',
+            'peso': 1.0,
+            'punto_entrega': 'Biblioteca Central', 
+            'estado': 'pendiente',
+            'puntos_ganados': 10
+        },
+        {
+            'usuario_id': 3,  # Carlos Rodríguez
+            'tipo_material': 'vidrio',
+            'peso': 3.0,
+            'punto_entrega': 'Laboratorio de Ciencias',
+            'estado': 'validado',
+            'puntos_ganados': 36
+        },
+        {
+            'usuario_id': 4,  # Dra. María López
+            'tipo_material': 'metal',
+            'peso': 1.5,
+            'punto_entrega': 'Hospital Universitario',
+            'estado': 'rechazado',
+            'puntos_ganados': 30
+        }
+    ]
+    
+    for material_data in materiales_prueba:
+        material = MaterialReciclado(**material_data)
+        db.session.add(material)
+        print(f"✅ Material creado: {material_data['tipo_material']} - {material_data['peso']}kg")
+    
+    # GUARDAR TODO
+    try:
+        db.session.commit()
+        print("🎉 TODOS LOS DATOS DE PRUEBA CREADOS EXITOSAMENTE!")
+        print("👑 Administrador: admin123 / admin123")
+        print("🎓 Estudiante 1: 20240001 / estudiante123")
+        print("🎓 Estudiante 2: 20240002 / estudiante123") 
+        print("👨‍🏫 Docente: 1001001 / docente123")
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error al guardar datos: {str(e)}")
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
